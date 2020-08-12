@@ -115,7 +115,7 @@
 
                     if(!empty($general_substitution)) {
 
-                        echo '<div class="card-header bg-light text-dark">Der Unterricht enfällt von der ' . $general_substitution['startTime'] . '. bis zur ' . $general_substitution['endTime'] . '. Stunde!</div>';
+                        echo '<div class="card-header bg-light text-dark text-center">Der Unterricht enfällt von der ' . $general_substitution['startTime'] . '. bis zur ' . $general_substitution['endTime'] . '. Stunde!</div>';
                     }
 
                     echo '<div class="card-body"><h5 class="card-title">' . $substitution_data['payload']['weekDay'];
