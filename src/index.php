@@ -43,7 +43,6 @@
             // You should have received a copy of the GNU General Public License
             // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-
             define("ENABLE_CACHING", true);
             define("REFRESH_TIME_SECONDS", 180);
 
@@ -302,14 +301,14 @@
 
                 $config = array(
 
-                    CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_HEADER         => false,
+                    CURLOPT_RETURNTRANSFER => true,
                     CURLOPT_FOLLOWLOCATION => true,
-                    CURLOPT_MAXREDIRS      => 3,
-                    CURLOPT_USERAGENT      => USER_AGENT,
                     CURLOPT_AUTOREFERER    => true,
+                    CURLOPT_MAXREDIRS      => 3,
                     CURLOPT_CUSTOMREQUEST  => "POST",
                     CURLOPT_POSTFIELDS     => $plan_params,
+                    CURLOPT_USERAGENT      => USER_AGENT,
                     CURLOPT_HTTPHEADER     => array('Content-Type: application/json', 'Content-Length: ' . strlen($plan_params))
 
                 );
@@ -320,7 +319,7 @@
                 $substitution_data = curl_exec($curl);
                 curl_close($curl);
 
-                return $substitution_data;
+                return html_entity_decode($substitution_data);
 
             }
 
