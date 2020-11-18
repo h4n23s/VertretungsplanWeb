@@ -91,7 +91,7 @@ class WebUntisEntityProvider extends EntityProvider
      * @param int $date_offset
      * @return Entity|null
      */
-    protected function getEntityL(int $date_offset): ?Entity
+    protected function getLiveEntity(int $date_offset): ?Entity
     {
         $payload = json_decode($this->getOnlineContent($date_offset), true)['payload'];
 

@@ -41,7 +41,7 @@ abstract class EntityProvider
 
             if($entity_cache->isCacheExpired($date_offset))
             {
-                $entity = $this->getEntityL($date_offset);
+                $entity = $this->getLiveEntity($date_offset);
                 $entity_cache->updateEntity($entity, $date_offset);
 
                 return $entity;
@@ -50,11 +50,11 @@ abstract class EntityProvider
             return $entity_cache->getEntity($date_offset);
         } else {
 
-            return $this->getEntityL($date_offset);
+            return $this->getLiveEntity($date_offset);
         }
     }
 
-    protected abstract function getEntityL(int $date_offset): ?Entity;
+    protected abstract function getLiveEntity(int $date_offset): ?Entity;
     protected abstract static function getType(): string;
 
     public static function getEntityProvider(string $identifier): EntityProvider
