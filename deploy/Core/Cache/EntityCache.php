@@ -58,7 +58,7 @@ abstract class EntityCache
 
     /**
      * Returns the UNIX timestamp at which an entity was updated or {@code -1}
-     * in case the entity doesn't exist (yet).
+     * in case the {@code Entity} doesn't exist (yet).
      *
      * @param int $date_offset
      * @return int
