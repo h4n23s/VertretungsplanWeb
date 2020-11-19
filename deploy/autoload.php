@@ -19,17 +19,15 @@ require_once 'Options/Configuration.php';
 require_once 'Core/Tools/Path.php';
 
 use SP\Core\Tools\Path;
-use SP\Options\Configuration;
 
 spl_autoload_register(function($class) {
 
     if(substr($class, 0, 2) === 'SP') {
 
         $class_directory = Path::parse(substr($class, strpos($class, '\\') + 1));
-        $project_directory = Path::parse(Configuration::getInstance()->getConfigurations('general')['project_dir']);
-        $document_root = Path::parse($_SERVER['DOCUMENT_ROOT']);
+        $document_root = Path::parse(__DIR__);
 
-        require_once $document_root->join($project_directory)->join($class_directory) . '.php';
+        require_once $document_root->join($class_directory) . '.php';
 
     }
 });
