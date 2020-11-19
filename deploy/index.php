@@ -38,7 +38,10 @@ for($date_offset = 0; $date_offset < $configurations['general']['forecast']; $da
 {
     $entity = $entity_provider->getEntity($date_offset);
 
-    if($entity === null) { die('<div style="font-family: Arial,serif; font-size: 20px;">An error occurred. Check again later if this issue persists</div>'); }
+    if($entity === null)
+    {
+        die('<div style="font-family: Arial,serif; font-size: 20px;">' . $translations['no_entity_provided'] . '</div>');
+    }
 
     array_push($entities, Filter::filterSubstitutions($entity, $selected_class));
 }
