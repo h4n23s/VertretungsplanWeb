@@ -46,7 +46,9 @@ class Room implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->name;
+        return [
+            'name' => $this->name
+        ];
     }
 
 }

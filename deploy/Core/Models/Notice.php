@@ -46,7 +46,9 @@ class Notice implements JsonSerializable
 
     public function jsonSerialize()
     {
-        return $this->body;
+        return [
+            'body' => $this->body
+        ];
     }
 
 }
