@@ -49,7 +49,7 @@ class Configuration
 
     public static function getInstance(): Configuration
     {
-        if(self::$instance == null)
+        if(self::$instance === null)
         {
             self::$instance = new self();
         }

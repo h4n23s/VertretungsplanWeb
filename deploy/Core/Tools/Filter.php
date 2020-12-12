@@ -39,7 +39,7 @@ class Filter
             {
                 foreach($target_classes as $target_class)
                 {
-                    if($class == $target_class)
+                    if($class === $target_class)
                     {
                         array_push($filtered, $substitution);
                         break;

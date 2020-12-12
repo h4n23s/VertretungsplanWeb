@@ -95,43 +95,43 @@ class WebUntisEntityProvider extends EntityProvider
     {
         $payload = json_decode($this->getOnlineContent($date_offset), true)['payload'];
 
-        if($payload != null)
+        if($payload !== null)
         {
             $substitutions = [];
 
             foreach($payload['rows'] as $row)
             {
                 $classes = [strip_tags($row['group'])];
-                $lessons = array_map('intval', explode('-', strip_tags($row['data'][0])));
 
-                $subject_full_name = array_key_exists(explode(' ', strip_tags($row['data'][3]))[0], self::$subject_replacements) ? self::$subject_replacements[explode(' ', strip_tags($row['data'][3]))[0]] : null;
+                $lessons = array_map('intval', explode('-', strip_tags($row['data'][0])));
+                sort($lessons);
+
+                $subject_full_name = null;
+                $subject_parts = explode(' ', strip_tags($row['data'][3]));
+
+                foreach(self::$subject_replacements as $subject_abbreviation => $subject_replacement)
+                {
+                    if($subject_parts[0] === $subject_abbreviation)
+                    {
+                        $subject_full_name = $subject_replacement . ' ' . implode('', array_shift($subject_parts));
+                        break;
+                    }
+                }
 
                 $subject = new Subject(strip_tags($row['data'][3]), $subject_full_name);
                 $room = new Room(strip_tags($row['data'][4]));
                 $teacher = new Teacher(strip_tags($row['data'][5]));
                 $notice = new Notice(strip_tags($row['data'][6]));
 
-                switch($row['cssClasses'][1])
+                $type = match($row['cssClasses'][1])
                 {
-                    case 'wu-fg-changedElement':
-                        $type = Type::TYPE_ROOM_CHANGE();
-                        break;
+                    'wu-fg-changedElement' => Type::TYPE_ROOM_CHANGE(),
+                    'wu-fg-cancelled' => Type::TYPE_CANCELLATION(),
+                    'wu-fg-substitution' => Type::TYPE_SUBSTITUTION(),
+                    'wu-fg-shift' => Type::TYPE_SHIFT(),
 
-                    case 'wu-fg-cancelled':
-                        $type = Type::TYPE_CANCELLATION();
-                        break;
-
-                    case 'wu-fg-substitution':
-                        $type = Type::TYPE_SUBSTITUTION();
-                        break;
-
-                    case 'wu-fg-shift':
-                        $type = Type::TYPE_SHIFT();
-                        break;
-
-                    default:
-                        $type = Type::TYPE_UNKNOWN();
-                }
+                    default => Type::TYPE_UNKNOWN()
+                };
 
                 array_push($substitutions, new Substitution($classes, $teacher, $room, $lessons, $subject, $type, $notice));
             }
@@ -163,7 +163,7 @@ class WebUntisEntityProvider extends EntityProvider
 
                 return new Entity($date, $last_update, $substitutions, $general_cancellation, $announcements);
 
-            } catch (Exception $ignored) {}
+            } catch (Exception) {}
         }
 
         return null;

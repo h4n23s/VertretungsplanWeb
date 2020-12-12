@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 // Copyright (C) 2020 Hannes Gehrold
 //
 // This program is free software: you can redistribute it and/or modify
@@ -15,18 +17,9 @@
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-require_once 'Core/Tools/Path.php';
+require_once '../../../autoload.php';
 
-use SP\Core\Tools\Path;
+use SP\Core\Controllers\GeneralSettingsController;
+use SP\Core\Entities\Request;
 
-spl_autoload_register(function($class) {
-
-    if(substr($class, 0, 2) === 'SP') {
-
-        $class_directory = Path::parse(substr($class, strpos($class, '\\') + 1));
-        $document_root = Path::parse(__DIR__);
-
-        require_once $document_root->join($class_directory) . '.php';
-
-    }
-});
+new GeneralSettingsController(Request::create());

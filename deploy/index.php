@@ -92,7 +92,7 @@ for($date_offset = 0; $date_offset < $configurations['general']['forecast']; $da
     {
         echo '<div class="card text-white bg-dark">';
 
-        if($entity->getGeneralCancellation() != null)
+        if($entity->getGeneralCancellation() !== null)
         {
             echo '<div class="card-header bg-light text-dark text-center">';
 
@@ -121,8 +121,16 @@ for($date_offset = 0; $date_offset < $configurations['general']['forecast']; $da
                 echo '<table>';
                 echo '<tbody><tr><td>';
 
-                echo '<span class="badge mr-1" style="font-size: 13px; font-weight: 300; background-color: ' . $substitution->getType()->getTheme() . '">' . $substitution->getTeacher()->getShortenedName() . '</span>';
-                echo '<span class="badge mr-1" style="font-size: 13px; font-weight: 300; background-color: ' . $substitution->getType()->getTheme() . '">' . $substitution->getSubject()->getFullName() . '</span>';
+                $subject_name =  $substitution->getTeacher()->getFullName() === null ?
+                    $substitution->getTeacher()->getShortenedName() :
+                    $substitution->getTeacher()->getFullName();
+
+                $teacher_name = $substitution->getSubject()->getFullName() === null ?
+                    $substitution->getSubject()->getShortenedName() :
+                    $substitution->getSubject()->getFullName();
+
+                echo '<span class="badge mr-1" style="font-size: 13px; font-weight: 300; background-color: ' . $substitution->getType()->getTheme() . '">' . $subject_name . '</span>';
+                echo '<span class="badge mr-1" style="font-size: 13px; font-weight: 300; background-color: ' . $substitution->getType()->getTheme() . '">' . $teacher_name . '</span>';
                 echo '<span class="badge mr-1" style="font-size: 13px; font-weight: 300; background-color: ' . $substitution->getType()->getTheme() . '">' . $substitution->getRoom()->getName() . '</span>';
 
                 echo '</td></tr>';
@@ -204,7 +212,7 @@ for($date_offset = 0; $date_offset < $configurations['general']['forecast']; $da
 
                         foreach($configurations['general']['classes'] as $class)
                         {
-                            if($class == $selected_class)
+                            if($class === $selected_class)
                             {
                                 echo '<option value="' . $class . '" selected>' . $class . '</option>';
                             } else {
