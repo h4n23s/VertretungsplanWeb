@@ -36,7 +36,7 @@ class WebUntisEntityProvider extends EntityProvider
 {
 
     // TODO These should be translatable
-    private static $subject_replacements = [
+    private static array $subject_replacements = [
         'BI'    => 'Biologie',
         'CH'    => 'Chemie',
         'D'     => 'Deutsch',

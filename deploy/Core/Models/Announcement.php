@@ -24,8 +24,8 @@ use JsonSerializable;
 class Announcement implements JsonSerializable
 {
 
-    private $subject;
-    private $body;
+    private string $subject;
+    private string $body;
 
     /**
      * Announcement constructor.

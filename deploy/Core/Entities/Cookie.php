@@ -22,11 +22,12 @@ namespace SP\Core\Entities;
 class Cookie
 {
 
-    private $name;
-    private $value;
+    private string $name;
+    private string $value;
 
     /**
      * Cookie constructor.
+     *
      * @param string $name
      * @param string $value
      */

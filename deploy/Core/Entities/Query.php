@@ -22,8 +22,8 @@ namespace SP\Core\Entities;
 class Query
 {
 
-    private $key;
-    private $values;
+    private string $key;
+    private array $values;
 
     /**
      * Query constructor.

@@ -22,11 +22,11 @@ namespace SP\Core\Entities;
 class Request
 {
 
-    private $ip;
-    private $user_agent;
-    private $headers;
-    private $cookies;
-    private $queries;
+    private string $ip;
+    private string $user_agent;
+    private array $headers;
+    private array $cookies;
+    private array $queries;
 
     /**
      * Request constructor.

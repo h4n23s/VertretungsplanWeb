@@ -22,8 +22,13 @@ namespace SP\Core\Tools;
 class Path
 {
 
-    private $parts;
+    private array $parts;
 
+    /**
+     * Path constructor.
+     *
+     * @param string[] $parts
+     */
     private function __construct(array $parts)
     {
         $this->parts = $parts;

@@ -26,8 +26,8 @@ use SP\Options\Configuration;
 abstract class EntityCache
 {
 
-    protected $configurations;
-    private $cache_timeout;
+    protected array $configurations;
+    private int $cache_timeout;
 
     /**
      * EntityCache constructor.

@@ -24,7 +24,7 @@ use JsonSerializable;
 class Notice implements JsonSerializable
 {
 
-    private $body;
+    private string $body;
 
     /**
      * Notice constructor.

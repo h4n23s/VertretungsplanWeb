@@ -22,8 +22,8 @@ namespace SP\Options;
 class Configuration
 {
 
-    private static $instance;
-    private $all_configurations;
+    private static Configuration $instance;
+    private array $all_configurations;
 
     private function __construct()
     {
@@ -32,24 +32,24 @@ class Configuration
 
     /**
      * @param string $topic
-     * @return mixed
+     * @return array
      */
-    public function getConfigurations(string $topic)
+    public function getConfigurations(string $topic): array
     {
         return $this->all_configurations[$topic];
     }
 
     /**
-     * @return array|false
+     * @return array
      */
-    public function getAllConfigurations()
+    public function getAllConfigurations(): array
     {
         return $this->all_configurations;
     }
 
     public static function getInstance(): Configuration
     {
-        if(self::$instance === null)
+        if(!isset(self::$instance))
         {
             self::$instance = new self();
         }
