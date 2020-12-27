@@ -107,13 +107,16 @@ class WebUntisEntityProvider extends EntityProvider
                 sort($lessons);
 
                 $subject_full_name = null;
-                $subject_parts = explode(' ', strip_tags($row['data'][3]));
+                $subject_parts = explode(' ', strip_tags($row['data'][3]), 2);
 
                 foreach(self::$subject_replacements as $subject_abbreviation => $subject_replacement)
                 {
                     if($subject_parts[0] === $subject_abbreviation)
                     {
-                        $subject_full_name = $subject_replacement . ' ' . implode('', array_shift($subject_parts));
+                        $subject_full_name = (count($subject_parts) > 1) ?
+                            $subject_replacement . ' ' . $subject_parts[1] :
+                            $subject_replacement;
+
                         break;
                     }
                 }
