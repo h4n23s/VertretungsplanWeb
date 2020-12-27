@@ -24,16 +24,16 @@ use JsonSerializable;
 class Response implements JsonSerializable
 {
 
-    private static $http_messages = [
+    private static array $http_messages = [
         200 => 'Ok',
         404 => 'Not Found',
         500 => 'Internal Server Error',
         501 => 'Not Implemented'
     ];
 
-    private $code;
-    private $headers;
-    private $body;
+    private int $code;
+    private array $headers;
+    private array $body;
 
     /**
      * Response constructor.

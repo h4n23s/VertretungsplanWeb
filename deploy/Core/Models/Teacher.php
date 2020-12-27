@@ -24,8 +24,8 @@ use JsonSerializable;
 class Teacher implements JsonSerializable
 {
 
-    private $shortened_name;
-    private $full_name;
+    private string $shortened_name;
+    private ?string $full_name;
 
     /**
      * Teacher constructor.

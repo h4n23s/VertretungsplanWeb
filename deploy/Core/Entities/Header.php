@@ -22,11 +22,12 @@ namespace SP\Core\Entities;
 class Header
 {
 
-    private $key;
-    private $value;
+    private string $key;
+    private string $value;
 
     /**
      * Header constructor.
+     *
      * @param string $key
      * @param string $value
      */

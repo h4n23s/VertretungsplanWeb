@@ -24,7 +24,7 @@ use JsonSerializable;
 class Room implements JsonSerializable
 {
 
-    private $name;
+    private string $name;
 
     /**
      * Room constructor.

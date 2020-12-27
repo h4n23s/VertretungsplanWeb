@@ -22,7 +22,7 @@ namespace SP\Options;
 class Translations
 {
 
-    private static $translations = [];
+    private static array $translations = [];
 
     /**
      * @param string $language

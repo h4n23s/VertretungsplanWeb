@@ -25,7 +25,7 @@ use SP\Core\Models\Entity;
 class MysqlEntityCache extends EntityCache
 {
 
-    private $pdo;
+    private PDO $pdo;
 
     /**
      * MysqlEntityCache constructor.

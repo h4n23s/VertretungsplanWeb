@@ -24,8 +24,8 @@ use JsonSerializable;
 class GeneralCancellation implements JsonSerializable
 {
 
-    private $start;
-    private $end;
+    private int $start;
+    private int $end;
 
     /**
      * GeneralCancellation constructor.

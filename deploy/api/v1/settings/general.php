@@ -17,39 +17,9 @@ declare(strict_types=1);
 // You should have received a copy of the GNU Affero General Public License
 // along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
-namespace SP\Core\Tools;
+require_once '../../../autoload.php';
 
-class Path
-{
+use SP\Core\Controllers\GeneralSettingsController;
+use SP\Core\Entities\Request;
 
-    private array $parts;
-
-    /**
-     * Path constructor.
-     *
-     * @param string[] $parts
-     */
-    private function __construct(array $parts)
-    {
-        $this->parts = $parts;
-    }
-
-    public static function parse(string $path)
-    {
-        $parts = preg_split('/(\/|\\\)+/', $path);
-        $parts = array_filter($parts, 'trim');
-
-        return new Path($parts);
-    }
-
-    public function join(Path $path): Path
-    {
-        return new Path(array_merge($this->parts, $path->parts));
-    }
-
-    public function __toString(): string
-    {
-        return implode(DIRECTORY_SEPARATOR, $this->parts);
-    }
-
-}
+new GeneralSettingsController(Request::create());

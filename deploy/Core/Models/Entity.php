@@ -25,13 +25,13 @@ use JsonSerializable;
 class Entity implements JsonSerializable
 {
 
-    private $date;
-    private $last_updated;
+    private DateTime $date;
+    private DateTime $last_updated;
 
-    private $substitutions;
-    private $general_cancellation;
+    private array $substitutions;
+    private ?GeneralCancellation $general_cancellation;
 
-    private $announcements;
+    private array $announcements;
 
     /**
      * SchoolDay constructor.

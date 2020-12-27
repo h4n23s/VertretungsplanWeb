@@ -22,8 +22,8 @@ namespace SP\Core\Entities;
 class Query
 {
 
-    private $key;
-    private $values;
+    private string $key;
+    private array $values;
 
     /**
      * Query constructor.
@@ -61,7 +61,7 @@ class Query
     {
         foreach ($queries as $query)
         {
-            if($query->getKey() == $key)
+            if($query->getKey() === $key)
             {
                 return $query;
             }

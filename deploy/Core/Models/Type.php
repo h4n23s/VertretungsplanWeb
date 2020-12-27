@@ -24,8 +24,8 @@ use JsonSerializable;
 class Type implements JsonSerializable
 {
 
-    private $identifier;
-    private $theme;
+    private string $identifier;
+    private string $theme;
 
     /**
      * Type constructor.

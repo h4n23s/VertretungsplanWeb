@@ -19,14 +19,11 @@ declare(strict_types=1);
 
 namespace SP\Core\Controllers;
 
-use SP\Core\Entities\Query;
 use SP\Core\Entities\Request;
 use SP\Core\Entities\Response;
-use SP\Core\Providers\EntityProvider;
-use SP\Core\Tools\Filter;
 use SP\Options\Configuration;
 
-class EntityController extends Controller
+class GeneralSettingsController extends Controller
 {
 
     /**
@@ -35,39 +32,7 @@ class EntityController extends Controller
      */
     protected function get(Request $request): Response
     {
-        $date_offset_query = Query::findQuery($request->getQueries(), 'date_offset');
-
-        if(isset($date_offset_query))
-        {
-            $configurations = Configuration::getInstance()->getAllConfigurations();
-
-            $date_offset = intval($date_offset_query->getValues()[0]);
-            $classes = Query::findQuery($request->getQueries(), 'classes');
-
-            if($date_offset >= $configurations['general']['forecast'])
-            {
-                $date_offset = $configurations['general']['forecast'] - 1;
-            } elseif($date_offset < 0)
-            {
-                $date_offset = 0;
-            }
-
-            $entity = EntityProvider::getEntityProvider($configurations['providers']['type'])->getEntity($date_offset);
-
-            if($entity === null)
-            {
-                return Response::getDefaultResponse(500);
-            }
-
-            if(isset($classes))
-            {
-                return new Response(200, [], Filter::filterSubstitutions($entity, ...$classes->getValues())->jsonSerialize());
-            } else {
-                return new Response(200, [], $entity->jsonSerialize());
-            }
-        } else {
-            return Response::getDefaultResponse(400, 'date_offset (query) was not specified');
-        }
+        return new Response(200, [], Configuration::getInstance()->getConfigurations('general'));
     }
 
     /**

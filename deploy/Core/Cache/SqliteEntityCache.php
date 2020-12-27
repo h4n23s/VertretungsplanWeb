@@ -25,7 +25,7 @@ use SQLite3;
 class SqliteEntityCache extends EntityCache
 {
 
-    private $sqlite;
+    private SQLite3 $sqlite;
 
     public function __construct()
     {

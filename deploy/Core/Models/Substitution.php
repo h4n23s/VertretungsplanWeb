@@ -24,13 +24,13 @@ use JsonSerializable;
 class Substitution implements JsonSerializable
 {
 
-    private $classes;
-    private $teacher;
-    private $room;
-    private $lessons;
-    private $subject;
-    private $type;
-    private $notice;
+    private array $classes;
+    private Teacher $teacher;
+    private Room $room;
+    private array $lessons;
+    private Subject $subject;
+    private Type $type;
+    private Notice $notice;
 
     /**
      * Substitution constructor.
