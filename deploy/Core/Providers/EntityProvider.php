@@ -42,8 +42,14 @@ abstract class EntityProvider
             if($entity_cache->isCacheExpired($date_offset))
             {
                 $entity = $this->getLiveEntity($date_offset);
-                $entity_cache->updateEntity($entity, $date_offset);
 
+                if($entity === null)
+                {
+                    // Replace entity with already existing one in order to reset cache timeout.
+                    $entity = $entity_cache->getEntity($date_offset);
+                }
+
+                $entity_cache->updateEntity($entity, $date_offset);
                 return $entity;
             }
 
@@ -54,6 +60,10 @@ abstract class EntityProvider
         }
     }
 
+    /**
+     * @param int $date_offset
+     * @return Entity|null Returns {@code null} in case the entity was not retrieved successfully.
+     */
     protected abstract function getLiveEntity(int $date_offset): ?Entity;
     protected abstract static function getType(): string;
 

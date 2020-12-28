@@ -38,7 +38,6 @@ abstract class EntityCache
         $this->cache_timeout = $this->configurations['caches']['timeout'];
     }
 
-
     /**
      * Inserts a provided {@code Entity} for a given date offset into the cache.
      *

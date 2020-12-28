@@ -93,80 +93,85 @@ class WebUntisEntityProvider extends EntityProvider
      */
     protected function getLiveEntity(int $date_offset): ?Entity
     {
-        $payload = json_decode($this->getOnlineContent($date_offset), true)['payload'];
+        $substitution_data = $this->getOnlineContent($date_offset);
 
-        if($payload !== null)
+        if($substitution_data !== null)
         {
-            $substitutions = [];
+            $payload = json_decode($substitution_data, true)['payload'];
 
-            foreach($payload['rows'] as $row)
+            if(isset($payload))
             {
-                $classes = [strip_tags($row['group'])];
+                $substitutions = [];
 
-                $lessons = array_map('intval', explode('-', strip_tags($row['data'][0])));
-                sort($lessons);
-
-                $subject_full_name = null;
-                $subject_parts = explode(' ', strip_tags($row['data'][3]), 2);
-
-                foreach(self::$subject_replacements as $subject_abbreviation => $subject_replacement)
+                foreach($payload['rows'] as $row)
                 {
-                    if($subject_parts[0] === $subject_abbreviation)
-                    {
-                        $subject_full_name = (count($subject_parts) > 1) ?
-                            $subject_replacement . ' ' . $subject_parts[1] :
-                            $subject_replacement;
+                    $classes = [strip_tags($row['group'])];
 
-                        break;
+                    $lessons = array_map('intval', explode('-', strip_tags($row['data'][0])));
+                    sort($lessons);
+
+                    $subject_full_name = null;
+                    $subject_parts = explode(' ', strip_tags($row['data'][3]), 2);
+
+                    foreach(self::$subject_replacements as $subject_abbreviation => $subject_replacement)
+                    {
+                        if($subject_parts[0] === $subject_abbreviation)
+                        {
+                            $subject_full_name = (count($subject_parts) > 1) ?
+                                $subject_replacement . ' ' . $subject_parts[1] :
+                                $subject_replacement;
+
+                            break;
+                        }
+                    }
+
+                    $subject = new Subject(strip_tags($row['data'][3]), $subject_full_name);
+                    $room = new Room(strip_tags($row['data'][4]));
+                    $teacher = new Teacher(strip_tags($row['data'][5]));
+                    $notice = new Notice(strip_tags($row['data'][6]));
+
+                    $type = match($row['cssClasses'][1])
+                    {
+                        'wu-fg-changedElement' => Type::TYPE_ROOM_CHANGE(),
+                        'wu-fg-cancelled' => Type::TYPE_CANCELLATION(),
+                        'wu-fg-substitution' => Type::TYPE_SUBSTITUTION(),
+                        'wu-fg-shift' => Type::TYPE_SHIFT(),
+
+                        default => Type::TYPE_UNKNOWN()
+                    };
+
+                    array_push($substitutions, new Substitution($classes, $teacher, $room, $lessons, $subject, $type, $notice));
+                }
+
+                $general_cancellation = null;
+
+                if(isset($payload['regularFreeData']))
+                {
+                    $general_cancellation = new GeneralCancellation(
+                        intval($payload['regularFreeData']['startTime']),
+                        intval($payload['regularFreeData']['endTime']));
+                }
+
+                $announcements = [];
+
+                if(isset($payload['messageData']['messages']))
+                {
+                    foreach($payload['messageData']['messages'] as $message)
+                    {
+                        $announcement = new Announcement(strip_tags($message['subject']), strip_tags($message['body']));
+                        array_push($announcements, $announcement);
                     }
                 }
 
-                $subject = new Subject(strip_tags($row['data'][3]), $subject_full_name);
-                $room = new Room(strip_tags($row['data'][4]));
-                $teacher = new Teacher(strip_tags($row['data'][5]));
-                $notice = new Notice(strip_tags($row['data'][6]));
-
-                $type = match($row['cssClasses'][1])
+                try
                 {
-                    'wu-fg-changedElement' => Type::TYPE_ROOM_CHANGE(),
-                    'wu-fg-cancelled' => Type::TYPE_CANCELLATION(),
-                    'wu-fg-substitution' => Type::TYPE_SUBSTITUTION(),
-                    'wu-fg-shift' => Type::TYPE_SHIFT(),
+                    $date = new DateTime((string) $payload['date']);
+                    $last_update = new DateTime($payload['lastUpdate']);
 
-                    default => Type::TYPE_UNKNOWN()
-                };
+                    return new Entity($date, $last_update, $substitutions, $general_cancellation, $announcements);
 
-                array_push($substitutions, new Substitution($classes, $teacher, $room, $lessons, $subject, $type, $notice));
+                } catch (Exception) {}
             }
-
-            $general_cancellation = null;
-
-            if(isset($payload['regularFreeData']))
-            {
-                $general_cancellation = new GeneralCancellation(
-                    intval($payload['regularFreeData']['startTime']),
-                    intval($payload['regularFreeData']['endTime']));
-            }
-
-            $announcements = [];
-
-            if(isset($payload['messageData']['messages']))
-            {
-                foreach($payload['messageData']['messages'] as $message)
-                {
-                    $announcement = new Announcement(strip_tags($message['subject']), strip_tags($message['body']));
-                    array_push($announcements, $announcement);
-                }
-            }
-
-            try
-            {
-                $date = new DateTime((string) $payload['date']);
-                $last_update = new DateTime($payload['lastUpdate']);
-
-                return new Entity($date, $last_update, $substitutions, $general_cancellation, $announcements);
-
-            } catch (Exception) {}
         }
 
         return null;
@@ -176,9 +181,9 @@ class WebUntisEntityProvider extends EntityProvider
      * Returns the current substitution data supplied by Untis.
      *
      * @param $date_offset
-     * @return string
+     * @return string|null
      */
-    private function getOnlineContent($date_offset): string
+    private function getOnlineContent($date_offset): ?string
     {
         $params_array = json_decode($this->plan_params, true);
         $params_array['date'] = date('Ymd');
@@ -192,7 +197,8 @@ class WebUntisEntityProvider extends EntityProvider
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_FOLLOWLOCATION => true,
             CURLOPT_AUTOREFERER    => true,
-            CURLOPT_MAXREDIRS      => 3,
+            CURLOPT_TIMEOUT_MS     => 2500,
+            CURLOPT_MAXREDIRS      => 2,
             CURLOPT_CUSTOMREQUEST  => 'POST',
             CURLOPT_POSTFIELDS     => $params_encoded,
             CURLOPT_USERAGENT      => $this->user_agent,
@@ -206,10 +212,15 @@ class WebUntisEntityProvider extends EntityProvider
         $curl = curl_init($this->plan_url);
 
         curl_setopt_array($curl, $config);
-        $substitution_data = curl_exec($curl);
+        $result = curl_exec($curl);
         curl_close($curl);
 
-        return html_entity_decode($substitution_data);
+        if($result !== false)
+        {
+            return html_entity_decode($result);
+        }
+
+        return null;
     }
 
     /**
